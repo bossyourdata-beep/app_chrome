@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Email confirmed — Boss Your Data</title>
+<meta name="robots" content="noindex">
+<style>
+  :root {
+    --old-lace: #FFF8EA; --surface: #FFFDF8; --obsidian: #1B1A17;
+    --ink-60: rgba(17,17,17,0.6); --reddish-brown: #9A422B;
+    --pine: #3E5E4D; --etched: #E2DEDA; --warm: #FCF4E4; --warm-border: #EAD9BE;
+  }
+  * { box-sizing: border-box; margin: 0; }
+  body {
+    background: var(--old-lace); color: var(--obsidian);
+    font: 400 16px/1.6 Georgia, 'Times New Roman', serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 520px; margin: 0 auto; padding: 72px 24px 80px; text-align: center; }
+  .wordmark { font: 700 20px 'Times New Roman', serif; }
+  .tag {
+    font: 600 8px ui-monospace, monospace; letter-spacing: 0.17em;
+    text-transform: uppercase; color: var(--reddish-brown); margin-left: 8px;
+  }
+  .card {
+    background: var(--surface); border: 1px solid var(--etched); border-radius: 16px;
+    padding: 34px 28px; margin-top: 36px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.04), 0 12px 30px -12px rgba(0,0,0,0.14);
+  }
+  .mark { font-size: 34px; line-height: 1; }
+  h1 { font: 700 26px/1.25 Georgia, serif; margin: 14px 0 10px; }
+  p { color: var(--ink-60); margin-bottom: 10px; }
+  ol { text-align: left; margin: 18px auto 0; padding-left: 24px; color: var(--ink-60); max-width: 380px; }
+  li { margin-bottom: 8px; }
+  li b { color: var(--obsidian); }
+  .note {
+    display: none; background: var(--warm); border: 1px solid var(--warm-border);
+    border-radius: 12px; padding: 12px 14px; margin-top: 18px; font-size: 14px; text-align: left;
+  }
+  footer { margin-top: 40px; font-size: 13.5px; color: var(--ink-60); }
+  footer a { color: var(--reddish-brown); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div><span class="wordmark">Boss Your Data</span><span class="tag">Life Sciences</span></div>
+
+  <div class="card">
+    <div class="mark" id="mark">✓</div>
+    <h1 id="headline">Email confirmed</h1>
+    <p id="lede">Your account is ready. You can close this tab.</p>
+    <ol id="steps">
+      <li><b>Open Chrome</b> on the computer where you added the extension.</li>
+      <li>Click the <b>BYD tab</b> on the right edge of any page (or the toolbar icon) to open the side panel.</li>
+      <li><b>Sign in</b> with your email and password.</li>
+    </ol>
+    <div class="note" id="note"></div>
+  </div>
+
+  <footer>© 2026 Boss Your Data · <a href="https://www.bossyourdata.com">bossyourdata.com</a></footer>
+</div>
+<script>
+  // Supabase appends outcome details as query or hash params. Surface errors
+  // (expired/used links) instead of falsely claiming success.
+  (function () {
+    var qs = new URLSearchParams(window.location.search);
+    var hs = new URLSearchParams(window.location.hash.replace(/^#/, ''));
+    var get = function (k) { return qs.get(k) || hs.get(k); };
+    var err = get('error_description') || get('error');
+    var type = get('type');
+    if (err) {
+      document.getElementById('mark').textContent = '!';
+      document.getElementById('headline').textContent = 'That link did not work';
+      document.getElementById('lede').textContent = decodeURIComponent(String(err).replace(/\+/g, ' '));
+      document.getElementById('steps').style.display = 'none';
+      var n = document.getElementById('note');
+      n.style.display = 'block';
+      n.innerHTML = 'Links expire after a short time and can only be used once. ' +
+        'Open the extension and use <b>Resend confirmation</b> (or <b>Forgot password</b>) to get a fresh link.';
+    } else if (type === 'recovery') {
+      document.getElementById('headline').textContent = 'Password reset confirmed';
+      document.getElementById('lede').textContent =
+        'Return to the Boss Your Data side panel to continue.';
+    }
+  })();
+</script>
+</body>
+</html>

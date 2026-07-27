@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Get the Chrome Extension — Boss Your Data</title>
+<meta name="description" content="Boss Your Data for Chrome: a life-science news feed with AI briefings, plus company and substance dashboards, in a side panel on any page. Free to install.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,600;6..72,700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --old-lace: #FFF8EA;
+    --surface: #FFFDF8;
+    --obsidian: #1B1A17;
+    --ink-60: rgba(17,17,17,0.6);
+    --ink-45: rgba(17,17,17,0.45);
+    --reddish-brown: #9A422B;
+    --copper: #A8763D;
+    --pine: #3E5E4D;
+    --etched: #E2DEDA;
+    --warm: #FCF4E4;
+    --warm-border: #EAD9BE;
+  }
+  * { box-sizing: border-box; margin: 0; }
+  body {
+    background: var(--old-lace);
+    color: var(--obsidian);
+    font: 400 16px/1.6 'Newsreader', Georgia, serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 680px; margin: 0 auto; padding: 48px 24px 80px; }
+  header.site {
+    display: flex; align-items: baseline; gap: 10px;
+    padding-bottom: 18px; border-bottom: 1px solid var(--etched); margin-bottom: 44px;
+  }
+  .wordmark { font: 700 18px 'Times New Roman', serif; color: var(--obsidian); text-decoration: none; }
+  .tag {
+    font: 600 8px 'JetBrains Mono', monospace; letter-spacing: 0.17em;
+    text-transform: uppercase; color: var(--reddish-brown);
+  }
+  .eyebrow {
+    font: 600 11px 'JetBrains Mono', monospace; letter-spacing: 0.16em;
+    text-transform: uppercase; color: var(--copper);
+  }
+  h1 { font: 700 38px/1.12 'Newsreader', Georgia, serif; margin: 10px 0 12px; max-width: 18ch; }
+  .sub { font-size: 17.5px; color: var(--ink-60); max-width: 46ch; margin-bottom: 26px; }
+  .cta {
+    display: inline-flex; align-items: center; gap: 10px;
+    background: var(--reddish-brown); color: #FFF8EA; text-decoration: none;
+    font: 700 16.5px 'Newsreader', Georgia, serif;
+    padding: 15px 26px; border-radius: 13px;
+    box-shadow: 0 14px 30px -12px rgba(154,66,43,0.65);
+    transition: background 160ms cubic-bezier(0.22,0.61,0.36,1);
+  }
+  .cta:hover { background: #86381F; }
+  .cta-meta { font: 500 11.5px 'JetBrains Mono', monospace; color: var(--ink-45); margin-top: 12px; }
+  .cards { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 44px 0 0; }
+  .card {
+    background: var(--surface); border: 1px solid var(--etched); border-radius: 16px;
+    padding: 16px 18px;
+  }
+  .card .k {
+    font: 600 9.5px 'JetBrains Mono', monospace; letter-spacing: 0.14em;
+    text-transform: uppercase; margin-bottom: 6px; display: block;
+  }
+  .card p { font-size: 14.5px; color: var(--ink-60); }
+  .card b { color: var(--obsidian); }
+  .free-note {
+    background: var(--warm); border: 1px solid var(--warm-border); border-radius: 14px;
+    padding: 14px 16px; margin-top: 28px; font-size: 15px;
+  }
+  .free-note b { color: var(--reddish-brown); }
+  .steps { margin: 40px 0 0; }
+  .steps h2 { font: 700 20px 'Newsreader', Georgia, serif; margin-bottom: 12px; }
+  .steps ol { padding-left: 22px; font-size: 15.5px; color: var(--ink-60); }
+  .steps li { margin-bottom: 7px; }
+  .steps b { color: var(--obsidian); }
+  footer {
+    margin-top: 56px; padding-top: 18px; border-top: 1px solid var(--etched);
+    font-size: 13.5px; color: var(--ink-60);
+  }
+  footer a { color: var(--reddish-brown); text-decoration: none; border-bottom: 1px solid rgba(154,66,43,0.3); }
+  @media (max-width: 560px) {
+    h1 { font-size: 30px; }
+    .cards { grid-template-columns: 1fr; }
+    .wrap { padding-top: 32px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="site">
+    <a class="wordmark" href="https://www.bossyourdata.com">Boss Your Data</a>
+    <span class="tag">Life Sciences</span>
+  </header>
+
+  <div class="eyebrow">Chrome extension</div>
+  <h1>Pharma intelligence, docked to every page.</h1>
+  <p class="sub">
+    A life-science news feed with AI briefings — plus company &amp; substance
+    dashboards, pipeline search and an AI analyst — in a side panel that opens
+    from a small tab on the edge of any page.
+  </p>
+
+  <!-- TODO: replace the href below with the Chrome Web Store listing URL once published -->
+  <a class="cta" href="https://chromewebstore.google.com/detail/REPLACE-WITH-LISTING-ID">
+    Add to Chrome — free
+  </a>
+  <div class="cta-meta">Free · Insights included · no card required</div>
+
+  <div class="cards">
+    <div class="card">
+      <span class="k" style="color:var(--copper)">Insights</span>
+      <p><b>The daily pharma feed.</b> Stories from 35+ life-science sources,
+      filtered by topic and source, with an AI-written daily briefing.</p>
+    </div>
+    <div class="card">
+      <span class="k" style="color:var(--pine)">Dashboards</span>
+      <p><b>One company, one dossier.</b> Products, trials, pipeline,
+      manufacturing sites and news assembled in seconds.</p>
+    </div>
+    <div class="card">
+      <span class="k" style="color:var(--reddish-brown)">Assets</span>
+      <p><b>Pipeline explorer.</b> Search drug × developer × indication,
+      filtered by modality, phase, target and funding.</p>
+    </div>
+    <div class="card">
+      <span class="k" style="color:var(--copper)">Ask BYD</span>
+      <p><b>An analyst on call.</b> Plain-English questions, grounded answers
+      drawn directly from the BYD database.</p>
+    </div>
+  </div>
+
+  <div class="free-note">
+    <b>Free forever, Insights included.</b> Dashboards, Search and Ask BYD are
+    part of BYD&nbsp;Pro — request a demo from inside the extension.
+  </div>
+
+  <div class="steps">
+    <h2>Getting started</h2>
+    <ol>
+      <li><b>Add to Chrome</b> with the button above.</li>
+      <li><b>Click the BYD tab</b> on the right edge of any page (or the toolbar icon) to open the panel.</li>
+      <li><b>Create your free account</b> — your news feed starts immediately.</li>
+    </ol>
+  </div>
+
+  <footer>
+    BYD is an intelligence &amp; productivity tool — it does not provide
+    medical, regulatory or legal advice.<br><br>
+    © 2026 Boss Your Data ·
+    <a href="https://www.bossyourdata.com">bossyourdata.com</a> ·
+    <a href="./privacy.html">Privacy Policy</a> ·
+    <a href="./terms.html">Terms of Service</a>
+  </footer>
+
+</div>
+</body>
+</html>

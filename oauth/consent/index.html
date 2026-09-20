@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Authorise access — Boss Your Data</title>
+<meta name="robots" content="noindex">
+<style>
+  :root {
+    --old-lace: #FFF8EA; --surface: #FFFDF8; --obsidian: #1B1A17;
+    --ink-60: rgba(17,17,17,0.6); --ink-45: rgba(17,17,17,0.45);
+    --reddish-brown: #9A422B; --pine: #3E5E4D;
+    --etched: #E2DEDA; --etched-soft: #EFE9DF;
+    --warm: #FCF4E4; --warm-border: #EAD9BE;
+  }
+  * { box-sizing: border-box; margin: 0; }
+  body {
+    background: var(--old-lace); color: var(--obsidian);
+    font: 400 16px/1.6 Georgia, 'Times New Roman', serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 520px; margin: 0 auto; padding: 72px 24px 80px; text-align: center; }
+  .wordmark { font: 700 20px 'Times New Roman', serif; }
+  .tag {
+    font: 600 8px ui-monospace, monospace; letter-spacing: 0.17em;
+    text-transform: uppercase; color: var(--reddish-brown); margin-left: 8px;
+  }
+  .card {
+    background: var(--surface); border: 1px solid var(--etched); border-radius: 16px;
+    padding: 34px 28px; margin-top: 36px; text-align: left;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.04), 0 12px 30px -12px rgba(0,0,0,0.14);
+  }
+  h1 { font: 700 26px/1.25 Georgia, serif; margin: 0 0 10px; text-align: center; }
+  p { color: var(--ink-60); margin-bottom: 10px; }
+  p.centre { text-align: center; }
+  .eyebrow {
+    font: 600 10px ui-monospace, monospace; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--reddish-brown);
+    text-align: center; margin-bottom: 6px;
+  }
+  .client {
+    background: var(--old-lace); border: 1px solid var(--etched-soft);
+    border-radius: 12px; padding: 14px 16px; margin: 18px 0;
+  }
+  .client .name { font-weight: 700; color: var(--obsidian); }
+  .client .uri {
+    font: 400 12.5px ui-monospace, monospace; color: var(--ink-45);
+    word-break: break-all; margin-top: 4px;
+  }
+  ul.scopes { list-style: none; padding: 0; margin: 16px 0 0; }
+  ul.scopes li {
+    color: var(--ink-60); padding: 7px 0 7px 26px; position: relative;
+    border-bottom: 1px solid var(--etched-soft); font-size: 15px;
+  }
+  ul.scopes li:last-child { border-bottom: 0; }
+  ul.scopes li::before {
+    content: ""; position: absolute; left: 6px; top: 15px;
+    width: 6px; height: 6px; border-radius: 50%; background: var(--pine);
+  }
+  .actions { display: flex; gap: 10px; margin-top: 24px; }
+  button {
+    flex: 1; font: 600 15px Georgia, serif; padding: 12px 16px;
+    border-radius: 999px; cursor: pointer; border: 1px solid var(--etched);
+    background: transparent; color: var(--obsidian);
+    transition: background 140ms ease, border-color 140ms ease;
+  }
+  button:hover:not(:disabled) { border-color: var(--reddish-brown); }
+  button.primary {
+    background: var(--reddish-brown); border-color: var(--reddish-brown); color: var(--old-lace);
+  }
+  button.primary:hover:not(:disabled) { background: #85381f; }
+  button:disabled { opacity: 0.55; cursor: default; }
+  button:focus-visible { outline: none; box-shadow: 0 0 0 3px rgba(168,118,61,0.35); }
+  label { display: block; font-size: 14px; color: var(--ink-60); margin: 14px 0 5px; }
+  input {
+    width: 100%; font: 400 16px Georgia, serif; padding: 11px 13px;
+    border: 1px solid var(--etched); border-radius: 10px;
+    background: var(--old-lace); color: var(--obsidian);
+  }
+  input:focus-visible { outline: none; border-color: var(--reddish-brown); box-shadow: 0 0 0 3px rgba(168,118,61,0.35); }
+  .note {
+    background: var(--warm); border: 1px solid var(--warm-border);
+    border-radius: 12px; padding: 12px 14px; margin-top: 18px; font-size: 14px;
+  }
+  .note.error { background: #FBEDE9; border-color: #E8CCC3; color: var(--reddish-brown); }
+  .muted { font-size: 13px; color: var(--ink-45); margin-top: 16px; text-align: center; }
+  footer { margin-top: 40px; font-size: 13.5px; color: var(--ink-60); text-align: center; }
+  footer a { color: var(--reddish-brown); }
+  [hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div><span class="wordmark">Boss Your Data</span><span class="tag">Life Sciences</span></div>
+
+  <div class="card">
+    <!-- Loading -->
+    <div id="loading">
+      <p class="centre">Checking this request…</p>
+    </div>
+
+    <!-- Sign in -->
+    <div id="signin" hidden>
+      <p class="eyebrow">Sign in to continue</p>
+      <h1>Sign in</h1>
+      <p class="centre">An application is asking to read your Boss Your Data account. Sign in to review the request.</p>
+      <form id="signin-form">
+        <label for="email">Email</label>
+        <input id="email" type="email" autocomplete="username" required>
+        <label for="password">Password</label>
+        <input id="password" type="password" autocomplete="current-password" required>
+        <div class="actions">
+          <button class="primary" type="submit" id="signin-btn">Sign in</button>
+        </div>
+      </form>
+      <div class="note error" id="signin-error" hidden></div>
+    </div>
+
+    <!-- Consent -->
+    <div id="consent" hidden>
+      <p class="eyebrow">Authorisation request</p>
+      <h1>Allow access?</h1>
+      <p class="centre" id="consent-lede"></p>
+
+      <div class="client">
+        <div class="name" id="client-name">An application</div>
+        <div class="uri" id="client-uri" hidden></div>
+      </div>
+
+      <p style="color:var(--obsidian);font-size:15px;margin-bottom:0"><b>It will be able to:</b></p>
+      <ul class="scopes" id="scopes"></ul>
+
+      <div class="note">
+        Access is limited to the datasets on your subscription, and is
+        <b>read&#8209;only</b> — nothing it does can change Boss Your Data's data.
+        You can revoke this at any time.
+      </div>
+
+      <div class="actions">
+        <button type="button" id="deny">Deny</button>
+        <button type="button" class="primary" id="approve">Allow access</button>
+      </div>
+      <p class="muted" id="signed-in-as"></p>
+      <div class="note error" id="consent-error" hidden></div>
+    </div>
+
+    <!-- Terminal states -->
+    <div id="done" hidden>
+      <h1 id="done-title">Done</h1>
+      <p class="centre" id="done-body"></p>
+    </div>
+
+    <div id="fatal" hidden>
+      <h1>Something went wrong</h1>
+      <p class="centre" id="fatal-body"></p>
+      <p class="muted">If this keeps happening, contact
+        <a href="mailto:support@bossyourdata.com">support@bossyourdata.com</a>.</p>
+    </div>
+  </div>
+
+  <!-- Relative, like the sibling pages, so the site works at any root. This page is two
+       directories deeper than they are. -->
+  <footer>
+    <a href="../../index.html">Boss Your Data</a> ·
+    <a href="../../privacy.html">Privacy</a> ·
+    <a href="../../terms.html">Terms</a>
+  </footer>
+</div>
+
+<script type="module">
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+
+const SUPABASE_URL = 'https://rwbtdokavulbzwhcrmlc.supabase.co'
+// Publishable key. Safe in client-side code by design — it carries no privileges
+// beyond the anon role, and every table is governed by row level security.
+const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_65qJCzWXXe455nFeGVksfA_-UYIVKiV'
+
+const supabase = createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY)
+
+const $ = (id) => document.getElementById(id)
+const show = (id) => {
+  for (const s of ['loading', 'signin', 'consent', 'done', 'fatal']) $(s).hidden = s !== id
+}
+const fatal = (msg) => { $('fatal-body').textContent = msg; show('fatal') }
+
+// Supabase sends the user here with ?authorization_id=…
+const authorizationId =
+  new URLSearchParams(location.search).get('authorization_id') ||
+  new URLSearchParams(location.search).get('authorization_request_id')
+
+// Human wording for the OAuth scopes Supabase issues.
+const SCOPE_TEXT = {
+  openid: 'Confirm who you are',
+  profile: 'See your name and profile details',
+  email: 'See your email address',
+  phone: 'See your phone number',
+  offline_access: 'Stay connected without asking you to sign in again',
+}
+
+function renderScopes(scopes) {
+  const list = $('scopes')
+  list.innerHTML = ''
+  const items = (scopes && scopes.length)
+    ? scopes.map((s) => SCOPE_TEXT[s] || s)
+    : ['Read Boss Your Data on your behalf']
+  // Always state the substantive permission, which is what the customer actually cares about.
+  items.push('Read the Boss Your Data datasets on your subscription')
+  for (const text of items) {
+    const li = document.createElement('li')
+    li.textContent = text
+    list.appendChild(li)
+  }
+}
+
+function redirectTo(result) {
+  const url =
+    result?.redirect_url || result?.redirectUrl || result?.url ||
+    result?.data?.redirect_url || result?.data?.redirectUrl || result?.data?.url
+  if (!url) {
+    fatal('The authorisation completed but no return address was provided. Close this tab and try connecting again.')
+    return
+  }
+  location.href = url
+}
+
+async function loadConsent() {
+  const { data, error } = await supabase.auth.oauth.getAuthorizationDetails(authorizationId)
+  if (error) {
+    fatal(error.message || 'This authorisation request could not be read. It may have expired — start the connection again.')
+    return
+  }
+
+  const details = data?.authorization ?? data ?? {}
+  const client = details.client ?? details.oauth_client ?? {}
+  const name = client.client_name || client.name || 'An application'
+  const redirectUri = client.redirect_uri || (client.redirect_uris && client.redirect_uris[0]) || ''
+
+  $('client-name').textContent = name
+  $('consent-lede').textContent = `${name} is asking to connect to your Boss Your Data account.`
+  if (redirectUri) {
+    // The MCP authorization spec asks that the redirect host be shown plainly,
+    // so a lookalike client is visible to the person approving it.
+    $('client-uri').textContent = `Will return you to ${redirectUri}`
+    $('client-uri').hidden = false
+  }
+  renderScopes(details.scopes || details.scope?.split(' '))
+
+  const { data: userData } = await supabase.auth.getUser()
+  if (userData?.user?.email) {
+    $('signed-in-as').textContent = `Signed in as ${userData.user.email}`
+  }
+  show('consent')
+}
+
+$('approve').addEventListener('click', async () => {
+  $('approve').disabled = $('deny').disabled = true
+  $('approve').textContent = 'Connecting…'
+  const { data, error } = await supabase.auth.oauth.approveAuthorization(authorizationId)
+  if (error) {
+    $('consent-error').textContent = error.message || 'Could not complete the authorisation.'
+    $('consent-error').hidden = false
+    $('approve').disabled = $('deny').disabled = false
+    $('approve').textContent = 'Allow access'
+    return
+  }
+  redirectTo(data)
+})
+
+$('deny').addEventListener('click', async () => {
+  $('approve').disabled = $('deny').disabled = true
+  const { data, error } = await supabase.auth.oauth.denyAuthorization(authorizationId)
+  if (error) {
+    $('done-title').textContent = 'Request denied'
+    $('done-body').textContent = 'Nothing was shared. You can close this tab.'
+    show('done')
+    return
+  }
+  redirectTo(data)
+})
+
+$('signin-form').addEventListener('submit', async (e) => {
+  e.preventDefault()
+  $('signin-error').hidden = true
+  $('signin-btn').disabled = true
+  $('signin-btn').textContent = 'Signing in…'
+  const { error } = await supabase.auth.signInWithPassword({
+    email: $('email').value.trim(),
+    password: $('password').value,
+  })
+  $('signin-btn').disabled = false
+  $('signin-btn').textContent = 'Sign in'
+  if (error) {
+    $('signin-error').textContent = error.message || 'Could not sign in. Check your email and password.'
+    $('signin-error').hidden = false
+    return
+  }
+  show('loading')
+  loadConsent()
+})
+
+// ---------------------------------------------------------------- entry point
+if (!authorizationId) {
+  fatal('This page is the authorisation step of connecting an application to Boss Your Data. It has no request to act on — start the connection from the application instead.')
+} else if (typeof supabase.auth.oauth?.getAuthorizationDetails !== 'function') {
+  fatal('This page could not load the authorisation library. Refresh to try again.')
+} else {
+  const { data: { session } } = await supabase.auth.getSession()
+  if (session) {
+    loadConsent()
+  } else {
+    show('signin')
+  }
+}
+</script>
+</body>
+</html>

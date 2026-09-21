@@ -108,7 +108,9 @@
       One URL, one sign-in. Nothing to install.</p>
   </header>
 
-  <div class="tabs" role="tablist" aria-label="Choose your assistant">
+  <!-- Progressive enhancement: the tab bar stays hidden unless JS runs. Without JS all three
+       sections simply stack, so the page is never two-thirds blank. -->
+  <div class="tabs" role="tablist" aria-label="Choose your assistant" hidden>
     <button role="tab" id="tab-claude"  aria-controls="panel-claude"  aria-selected="true">Claude</button>
     <button role="tab" id="tab-chatgpt" aria-controls="panel-chatgpt" aria-selected="false">ChatGPT</button>
     <button role="tab" id="tab-codex"   aria-controls="panel-codex"   aria-selected="false">Codex</button>
@@ -116,7 +118,7 @@
 
   <!-- ─────────────────────────────────────────────── Claude -->
   <section class="card" role="tabpanel" id="panel-claude" aria-labelledby="tab-claude">
-    <p class="eyebrow">Claude · web, desktop and mobile</p>
+    <h2 class="eyebrow">Claude · web, desktop and mobile</h2>
     <ol>
       <li>
         <b>Open the connector settings</b>
@@ -150,8 +152,8 @@
   </section>
 
   <!-- ────────────────────────────────────────────── ChatGPT -->
-  <section class="card" role="tabpanel" id="panel-chatgpt" aria-labelledby="tab-chatgpt" hidden>
-    <p class="eyebrow">ChatGPT · Plus, Pro, Business, Enterprise or Edu</p>
+  <section class="card" role="tabpanel" id="panel-chatgpt" aria-labelledby="tab-chatgpt">
+    <h2 class="eyebrow">ChatGPT · Plus, Pro, Business, Enterprise or Edu</h2>
     <ol>
       <li>
         <b>Turn on Developer Mode</b>
@@ -189,8 +191,8 @@
   </section>
 
   <!-- ──────────────────────────────────────────────── Codex -->
-  <section class="card" role="tabpanel" id="panel-codex" aria-labelledby="tab-codex" hidden>
-    <p class="eyebrow">Codex · CLI, desktop app and IDE extension</p>
+  <section class="card" role="tabpanel" id="panel-codex" aria-labelledby="tab-codex">
+    <h2 class="eyebrow">Codex · CLI, desktop app and IDE extension</h2>
     <ol>
       <li>
         <b>Add the server</b>
@@ -247,17 +249,22 @@
 </div>
 
 <script>
-  // Tool picker
-  const tabs = document.querySelectorAll('[role="tab"]')
-  tabs.forEach((tab) => {
-    tab.addEventListener('click', () => {
-      tabs.forEach((t) => {
-        const selected = t === tab
-        t.setAttribute('aria-selected', String(selected))
-        document.getElementById(t.getAttribute('aria-controls')).hidden = !selected
-      })
+  // Tool picker. The markup ships with every section visible and the tab bar hidden, so a
+  // browser that never runs this still shows all three sets of instructions. Only once we
+  // are certain JS works do we reveal the tabs and collapse down to one section.
+  const tabs = [...document.querySelectorAll('[role="tab"]')]
+  const select = (tab) => {
+    tabs.forEach((t) => {
+      const selected = t === tab
+      t.setAttribute('aria-selected', String(selected))
+      document.getElementById(t.getAttribute('aria-controls')).hidden = !selected
     })
-  })
+  }
+  if (tabs.length) {
+    document.querySelector('.tabs').hidden = false
+    tabs.forEach((tab) => tab.addEventListener('click', () => select(tab)))
+    select(tabs[0])
+  }
 
   // Copy buttons. Falls back to selecting the text where the clipboard API is unavailable
   // (older browsers, or a page served over plain HTTP).

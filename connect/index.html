@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Connect Boss Your Data to your AI assistant</title>
+<meta name="description" content="Connect Boss Your Data to Claude, ChatGPT or Codex. One URL, one sign-in, nothing to install.">
+<style>
+  :root {
+    --old-lace: #FFF8EA; --old-lace-2: #FBF1DD; --surface: #FFFDF8; --obsidian: #1B1A17;
+    --onyx: #111111;
+    --ink-60: rgba(17,17,17,0.6); --ink-45: rgba(17,17,17,0.45);
+    --reddish-brown: #9A422B; --copper: #A8763D; --pine: #3E5E4D;
+    --etched: #E2DEDA; --etched-soft: #EFE9DF;
+    --warm: #FCF4E4; --warm-border: #EAD9BE;
+  }
+  * { box-sizing: border-box; margin: 0; }
+  body {
+    background: var(--old-lace); color: var(--obsidian);
+    font: 400 16px/1.6 Georgia, 'Times New Roman', serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 720px; margin: 0 auto; padding: 64px 24px 80px; }
+  @media (max-width: 640px) { .wrap { padding: 40px 18px 56px; } }
+
+  header { text-align: center; margin-bottom: 40px; }
+  .byd-logo { display: inline-flex; align-items: center; gap: .5em; font-size: 26px; line-height: 1; text-decoration: none; }
+  .byd-logo img { height: 2.09em; width: auto; display: block; flex: none; }
+  .wordmark { font: 400 26px 'Times New Roman', serif; letter-spacing: -.015em; color: var(--onyx); }
+  .tag { font: 600 9px ui-monospace, monospace; letter-spacing: .17em; text-transform: uppercase; color: var(--reddish-brown); margin-left: 8px; }
+
+  h1 { font: 700 34px/1.2 Georgia, serif; margin: 28px 0 10px; text-align: center; }
+  .lede { color: var(--ink-60); text-align: center; max-width: 52ch; margin: 0 auto; }
+
+  .eyebrow { font: 600 10px ui-monospace, monospace; letter-spacing: .14em; text-transform: uppercase; color: var(--reddish-brown); }
+
+  /* tool picker */
+  .tabs { display: flex; gap: 8px; margin: 40px 0 0; justify-content: center; flex-wrap: wrap; }
+  .tabs button {
+    font: 600 14px Georgia, serif; padding: 9px 18px; border-radius: 999px;
+    border: 1px solid var(--etched); background: transparent; color: var(--obsidian); cursor: pointer;
+    transition: all 140ms cubic-bezier(.22,.61,.36,1);
+  }
+  .tabs button:hover { border-color: var(--copper); }
+  .tabs button[aria-selected="true"] { background: var(--reddish-brown); border-color: var(--reddish-brown); color: var(--old-lace); }
+  .tabs button:focus-visible { outline: none; box-shadow: 0 0 0 3px rgba(168,118,61,.35); }
+
+  .card {
+    background: var(--surface); border: 1px solid var(--etched); border-radius: 16px;
+    padding: 28px 26px; margin-top: 20px;
+    box-shadow: 0 1px 2px rgba(0,0,0,.04), 0 12px 30px -12px rgba(0,0,0,.14);
+  }
+  @media (max-width: 640px) { .card { padding: 22px 18px; } }
+
+  ol { margin: 0; padding-left: 0; list-style: none; counter-reset: step; }
+  ol li { counter-increment: step; position: relative; padding-left: 40px; margin-bottom: 22px; }
+  ol li:last-child { margin-bottom: 0; }
+  ol li::before {
+    content: counter(step); position: absolute; left: 0; top: 1px;
+    width: 26px; height: 26px; border-radius: 50%;
+    background: var(--old-lace-2); border: 1px solid var(--etched);
+    font: 600 13px ui-monospace, monospace; color: var(--reddish-brown);
+    display: flex; align-items: center; justify-content: center;
+  }
+  /* Direct child only — a bare `li b` also caught the inline <b> inside <p>, which broke
+     sentences like "Leave OAuth Client Secret blank" across three lines. */
+  li > b { display: block; margin-bottom: 3px; }
+  li p { color: var(--ink-60); font-size: 15px; margin: 0; }
+
+  /* copy field */
+  .copy { display: flex; align-items: stretch; gap: 0; margin-top: 10px; border: 1px solid var(--etched); border-radius: 10px; overflow: hidden; background: var(--old-lace); }
+  .copy code { flex: 1; font: 400 13px/1.4 ui-monospace, Menlo, monospace; padding: 11px 12px; overflow-x: auto; white-space: nowrap; color: var(--onyx); }
+  .copy button {
+    flex: none; border: 0; border-left: 1px solid var(--etched); background: var(--old-lace-2);
+    font: 600 12px ui-monospace, monospace; text-transform: uppercase; letter-spacing: .08em;
+    color: var(--reddish-brown); padding: 0 14px; cursor: pointer; transition: background 140ms;
+  }
+  .copy button:hover { background: var(--warm); }
+  .copy button:focus-visible { outline: none; box-shadow: inset 0 0 0 2px var(--copper); }
+  .copy button.done { color: var(--pine); }
+
+  .note { background: var(--warm); border: 1px solid var(--warm-border); border-radius: 12px; padding: 13px 15px; margin-top: 20px; font-size: 14.5px; }
+  .note b { color: var(--obsidian); }
+
+  .asks { margin-top: 44px; }
+  .asks h2 { font: 700 20px/1.3 Georgia, serif; margin-bottom: 14px; }
+  .asks ul { list-style: none; padding: 0; margin: 0; }
+  .asks li { padding: 11px 0; border-bottom: 1px solid var(--etched-soft); color: var(--ink-60); font-style: italic; }
+  .asks li:last-child { border-bottom: 0; }
+
+  footer { margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--etched-soft); text-align: center; font-size: 14px; color: var(--ink-60); }
+  footer a { color: var(--reddish-brown); }
+  .fineprint { font-size: 13px; color: var(--ink-45); margin-top: 10px; }
+  [hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <a class="byd-logo" href="../index.html" aria-label="Boss Your Data — home">
+      <img src="https://rwbtdokavulbzwhcrmlc.supabase.co/storage/v1/object/public/brand/byd-icon-256.png" alt="">
+      <span><span class="wordmark">Boss Your Data</span><span class="tag">Life Sciences</span></span>
+    </a>
+    <h1>Connect Boss Your Data to your AI assistant</h1>
+    <p class="lede">Ask questions of the Boss Your Data life-science database in plain English —
+      companies, clinical trials, substances, FDA regulatory position, audit signal and news.
+      One URL, one sign-in. Nothing to install.</p>
+  </header>
+
+  <div class="tabs" role="tablist" aria-label="Choose your assistant">
+    <button role="tab" id="tab-claude"  aria-controls="panel-claude"  aria-selected="true">Claude</button>
+    <button role="tab" id="tab-chatgpt" aria-controls="panel-chatgpt" aria-selected="false">ChatGPT</button>
+    <button role="tab" id="tab-codex"   aria-controls="panel-codex"   aria-selected="false">Codex</button>
+  </div>
+
+  <!-- ─────────────────────────────────────────────── Claude -->
+  <section class="card" role="tabpanel" id="panel-claude" aria-labelledby="tab-claude">
+    <p class="eyebrow">Claude · web, desktop and mobile</p>
+    <ol>
+      <li>
+        <b>Open the connector settings</b>
+        <p>In Claude, go to <b>Settings → Connectors → Add custom connector</b>.</p>
+      </li>
+      <li>
+        <b>Paste the server URL</b>
+        <div class="copy">
+          <code>https://rwbtdokavulbzwhcrmlc.supabase.co/functions/v1/mcp</code>
+          <button type="button" data-copy>Copy</button>
+        </div>
+      </li>
+      <li>
+        <b>Open Advanced settings and paste the Client ID</b>
+        <div class="copy">
+          <code>1755a01c-eb6d-4f6d-a72b-54a0a27bb28c</code>
+          <button type="button" data-copy>Copy</button>
+        </div>
+        <p style="margin-top:8px">Leave <b>OAuth Client Secret</b> blank — there isn't one, and
+          none is needed.</p>
+      </li>
+      <li>
+        <b>Sign in and approve</b>
+        <p>Your browser opens the Boss Your Data sign-in page, then an approval screen. Check it
+          says it will return you to <b>claude.ai</b>, then approve. You only do this once.</p>
+      </li>
+    </ol>
+    <div class="note">
+      <b>Claude Code</b> is not supported yet. Claude on the web, desktop and mobile all work.
+    </div>
+  </section>
+
+  <!-- ────────────────────────────────────────────── ChatGPT -->
+  <section class="card" role="tabpanel" id="panel-chatgpt" aria-labelledby="tab-chatgpt" hidden>
+    <p class="eyebrow">ChatGPT · Plus, Pro, Business, Enterprise or Edu</p>
+    <ol>
+      <li>
+        <b>Turn on Developer Mode</b>
+        <p><b>Settings → Apps &amp; Connectors → Developer Mode</b>. On Business and Enterprise an
+          administrator may need to allow this first.</p>
+      </li>
+      <li>
+        <b>Create the connector</b>
+        <p>Still in Apps &amp; Connectors, choose <b>Create</b>. Name it <b>Boss Your Data</b>,
+          then paste this as the MCP server URL:</p>
+        <div class="copy">
+          <code>https://rwbtdokavulbzwhcrmlc.supabase.co/functions/v1/mcp</code>
+          <button type="button" data-copy>Copy</button>
+        </div>
+        <p style="margin-top:8px">Keep the <b>/mcp</b> on the end — dropping it is the most common
+          mistake.</p>
+      </li>
+      <li>
+        <b>Choose OAuth and paste the Client ID</b>
+        <div class="copy">
+          <code>299d0127-55ff-4cf6-853d-d471de7f1f3f</code>
+          <button type="button" data-copy>Copy</button>
+        </div>
+        <p style="margin-top:8px">Leave the client secret blank.</p>
+      </li>
+      <li>
+        <b>Sign in and approve</b>
+        <p>Check the approval screen says it will return you to <b>chatgpt.com</b>, then approve.
+          The tools register automatically.</p>
+      </li>
+    </ol>
+    <div class="note">
+      Developer Mode is not available on the ChatGPT free tier.
+    </div>
+  </section>
+
+  <!-- ──────────────────────────────────────────────── Codex -->
+  <section class="card" role="tabpanel" id="panel-codex" aria-labelledby="tab-codex" hidden>
+    <p class="eyebrow">Codex · CLI, desktop app and IDE extension</p>
+    <ol>
+      <li>
+        <b>Add the server</b>
+        <div class="copy">
+          <code>codex mcp add boss-your-data --url https://rwbtdokavulbzwhcrmlc.supabase.co/functions/v1/mcp --oauth-client-id c652995e-2f91-4465-9351-5d6945ea7977</code>
+          <button type="button" data-copy>Copy</button>
+        </div>
+      </li>
+      <li>
+        <b>Sign in</b>
+        <div class="copy">
+          <code>codex mcp login boss-your-data</code>
+          <button type="button" data-copy>Copy</button>
+        </div>
+        <p style="margin-top:8px">Your browser opens the Boss Your Data sign-in and approval
+          screens.</p>
+      </li>
+    </ol>
+    <div class="note">
+      <b>If sign-in fails on a redirect mismatch,</b> Codex has bound a random port. Add
+      <code style="font-size:13px">mcp_oauth_callback_port = 3118</code> to the top level of
+      <code style="font-size:13px">~/.codex/config.toml</code> and ask us to allow that port.
+    </div>
+  </section>
+
+  <section class="asks">
+    <h2>Once you're connected</h2>
+    <p style="color:var(--ink-60);margin-bottom:12px">Start with
+      <i>"What datasets do I have access to?"</i> — then ask anything:</p>
+    <ul>
+      <li>Which companies run the most Phase III trials for GLP-1 drugs?</li>
+      <li>Show me FDA warning letters by country over the last three years.</li>
+      <li>Which contract manufacturers make products for our competitors?</li>
+      <li>Build me a dashboard of recent regulatory news for the companies we track.</li>
+    </ul>
+    <div class="note" style="margin-top:22px">
+      You will only ever see the datasets on your subscription, and everything is
+      <b>read-only</b> — nothing you or your assistant does can change Boss Your Data's data.
+    </div>
+  </section>
+
+  <footer>
+    Need a hand, or a dataset added to your subscription?
+    <a href="mailto:support@bossyourdata.com">support@bossyourdata.com</a>
+    <p class="fineprint">Boss Your Data is an intelligence and productivity tool. It does not give
+      medical, regulatory or legal advice.</p>
+    <p class="fineprint">
+      <a href="../index.html">Boss Your Data</a> ·
+      <a href="../privacy.html">Privacy</a> ·
+      <a href="../terms.html">Terms</a>
+    </p>
+  </footer>
+
+</div>
+
+<script>
+  // Tool picker
+  const tabs = document.querySelectorAll('[role="tab"]')
+  tabs.forEach((tab) => {
+    tab.addEventListener('click', () => {
+      tabs.forEach((t) => {
+        const selected = t === tab
+        t.setAttribute('aria-selected', String(selected))
+        document.getElementById(t.getAttribute('aria-controls')).hidden = !selected
+      })
+    })
+  })
+
+  // Copy buttons. Falls back to selecting the text where the clipboard API is unavailable
+  // (older browsers, or a page served over plain HTTP).
+  document.querySelectorAll('[data-copy]').forEach((btn) => {
+    btn.addEventListener('click', async () => {
+      const text = btn.previousElementSibling.textContent.trim()
+      try {
+        await navigator.clipboard.writeText(text)
+        btn.textContent = 'Copied'
+        btn.classList.add('done')
+        setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('done') }, 1600)
+      } catch {
+        const range = document.createRange()
+        range.selectNodeContents(btn.previousElementSibling)
+        const sel = getSelection()
+        sel.removeAllRanges()
+        sel.addRange(range)
+        btn.textContent = 'Select all'
+      }
+    })
+  })
+</script>
+</body>
+</html>

@@ -230,10 +230,19 @@ async function loadConsent() {
     return
   }
 
+  // Already approved on an earlier connection: Supabase auto-approves, returns only the
+  // address to send the browser back to, and the request is no longer pending — so
+  // showing the question here would fail on "Allow access". Go straight back instead.
+  if (data?.redirect_url && !data.authorization_id) {
+    redirectTo(data)
+    return
+  }
+
   const details = data?.authorization ?? data ?? {}
   const client = details.client ?? details.oauth_client ?? {}
   const name = client.client_name || client.name || 'An application'
-  const redirectUri = client.redirect_uri || (client.redirect_uris && client.redirect_uris[0]) || ''
+  const redirectUri = details.redirect_uri || client.redirect_uri ||
+    (client.redirect_uris && client.redirect_uris[0]) || ''
 
   $('client-name').textContent = name
   $('consent-lede').textContent = `${name} is asking to connect to your Boss Your Data account.`
